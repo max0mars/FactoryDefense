@@ -1,0 +1,17 @@
+Features to implement:
+
+- different types of bots (identified by different shapes and colors)
+- factory turrets
+- upgrade screen
+- Different Levels (rougue-lite, complete n levels, mini bosses and final boss)
+
+
+Need a generic structure for entities as things that can be attacked. Need to have hp and takedamage() funciton. Need to have x and y. Need to have a tag.
+- factories
+- all the types of robots
+
+
+
+House Cleaning:
+- make buttons and stuff pretty
+- Balance game!!!
