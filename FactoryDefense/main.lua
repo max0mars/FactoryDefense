@@ -22,11 +22,8 @@ function love.load()
     table.insert(minebots, minebot:new(mine, factory))
 
     bullets = {}
-
     defensebots = {}
-
     enemybots = {}
-
     buttons = {}
 
     GameState = 0 -- 0 = ingame, 1 = win, 2 = loss

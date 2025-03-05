@@ -1,47 +1,32 @@
 entity = {}
-
+entity.__index = entity
 -- delete system: every entity gets a unique value starting at 1
 -- the key of the entity in a table is always the unique value
 
-function entity.new(self, color)
+function entity:new(x, y, health, tag)
     o = {}
     setmetatable(o, self)
-    self.__index = self
 
     o.x = 0
     o.y = 0
-    o.radius = 4
-    o.target = nil
     o.alive = true
-    o.color = {
-        r = 20,
-        g = 200,
-        b = 20
-    }
-    if(color) then
-        o.color = color
-    end
-
-    --stats
-    o.speed = 5
     o.health = 100
-    o.range = 15
-    o.damage = 25
-    o.attackspeed = 1
-    
+    o.tag = tag
     return o
 end
 
-function entity.clone(self, ent)
+function entity:clone()
     ent = {}
     for k, v in pairs(self) do
           ent[k] = v
     end
-    setmetatable(ent, self)
+    setmetatable(ent, {__index = self})
     return ent
 end
 
-function entity:draw()
-    love.graphics.setColor(love.math.colorFromBytes(self.color.r, self.color.g, self.color.b))
-    love.graphics.circle('line', self.x, self.y, self.radius)
+function takeDamage(damage)
+    self.health = self.health - damage
+    if self.health <= 0 then
+        self.alive = false
+    end
 end
