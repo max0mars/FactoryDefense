@@ -5,10 +5,16 @@ Features to implement:
 - upgrade screen
 - Different Levels (rougue-lite, complete n levels, mini bosses and final boss)
 
+stat upgrades:
+    have an upgrade table stored in main and an apply upgrade function in the robot table
 
 Need a generic structure for entities as things that can be attacked. Need to have hp and takedamage() funciton. Need to have x and y. Need to have a tag.
 - factories
-- all the types of robots
+- make a generic robot class for all robots to inherit from ()
+    How I will implement inheritance:
+        specific bot classes hold all the unique stat values and function overides
+        any functions or stats that are the same across all bots will go in the parent
+        
 
 
 

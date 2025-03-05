@@ -11,8 +11,7 @@ require('bullet')
 defensebot = {}
 
 function defensebot:new(bullets)
-    o = {}
-    setmetatable(o, self)
+    o = setmetatable({}, self)
     self.__index = self
     o.x = 150
     o.y = 350
