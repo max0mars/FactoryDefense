@@ -1,7 +1,6 @@
 entity = {}
 entity.__index = entity
--- delete system: every entity gets a unique value starting at 1
--- the key of the entity in a table is always the unique value
+
 
 function entity:new(x, y, health, tag)
     o = {}
@@ -9,7 +8,7 @@ function entity:new(x, y, health, tag)
 
     o.x = 0
     o.y = 0
-    o.alive = true
+    o.delete = falses
     o.health = 100
     o.tag = tag
     return o
@@ -25,8 +24,10 @@ function entity:clone()
 end
 
 function takeDamage(damage)
+    if(self.delete) then return false end
     self.health = self.health - damage
     if self.health <= 0 then
-        self.alive = false
+        self.delete = true
     end
+    return true
 end

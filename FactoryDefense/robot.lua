@@ -44,7 +44,7 @@ function robot:attack(targets, base)
     if targets == nil then return false end
     
     self.target = nil
-    local prev = 999999999
+    local prev = 999999999 --must be larger than range*range
     for i, target in ipairs(targets) do
         local x = target.x - self.x
         local y = target.y - self.y
