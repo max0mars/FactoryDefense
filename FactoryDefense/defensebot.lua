@@ -1,4 +1,5 @@
 require('bullet')
+require ('robot')
 --require('entity')
 
 --[[
@@ -11,38 +12,18 @@ require('bullet')
 defensebot = {}
 
 function defensebot:new(bullets)
-    o = setmetatable({}, self)
-    self.__index = self
-    o.x = 150
-    o.y = 350
 
-    o.delete = false
+    o = robot:new(150, 350, 100, "defensebot")
+    setmetatable(o, self)
+
     o.yvalue = love.math.random(200, 500)
     if(o.yvalue < 300) then o.yvalue = o.yvalue + 50
     elseif o.yvalue > 400 then o.yvalue = o.yvalue - 50 end
     o.ydir = 1
-    o.color = {
-        r = 20,
-        g = 200,
-        b = 200
-    }
     o.radius = 4
     if(o.yvalue < 350) then
         o.ydir = -1
     end
-
-    o.target = nil
-    o.bullets = bullets
-    o.counter = 0
-
-    --stats
-    o.speed = 50
-    o.health = 100
-    o.range = 150
-    o.rangeSq = o.range * o.range
-    o.damage = 25
-    o.bulletSpeed = 500
-    o.attackspeed = 1
     return o
 end
 

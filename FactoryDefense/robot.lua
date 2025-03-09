@@ -5,6 +5,27 @@ robot.__index = robot
 
 function robot:new(x, y, health, tag, bullets)
     o = entity:new(x, y, health, tag)
+    o.speed = 50
+    o.health = 100
+    o.range = 150
+    o.rangeSq = o.range * o.range
+    o.damage = 25
+    o.bulletSpeed = 500
+    o.attackspeed = 1
+
+    o.radius = 4 --maybe the radius is length if it is square shaped?
+
+    o.target = nil
+    o.bullets = bullets
+    o.counter = 0
+
+
+    o.color = {
+        r = 20,
+        g = 200,
+        b = 200
+    }
+
     setmetatable(o, self)
     return o
 end
