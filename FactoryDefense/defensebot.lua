@@ -1,6 +1,6 @@
 require('bullet')
 require ('robot')
---require('entity')
+
 
 --[[
     - Spawn outside factory with a set y value
@@ -9,47 +9,49 @@ require ('robot')
     - once reach a certain x value, get destroyed
 ]]
 
-defensebot = {}
+defensebot = setmetatable({}, {__index = robot})
+defensebot.__index = defensebot
 
 function defensebot:new(bullets)
 
-    o = robot:new(150, 350, 100, "defensebot")
+    o = robot:new(150, 350, 100, "defensebot", bullets)
     setmetatable(o, self)
 
-    o.yvalue = love.math.random(200, 500)
-    if(o.yvalue < 300) then o.yvalue = o.yvalue + 50
-    elseif o.yvalue > 400 then o.yvalue = o.yvalue - 50 end
-    o.ydir = 1
-    o.radius = 4
-    if(o.yvalue < 350) then
-        o.ydir = -1
-    end
+
+    -- o.yvalue = love.math.random(200, 500)
+    -- if(o.yvalue < 300) then o.yvalue = o.yvalue + 50
+    -- elseif o.yvalue > 400 then o.yvalue = o.yvalue - 50 end
+    -- o.ydir = 1
+    -- o.radius = 4
+    -- if(o.yvalue < 350) then
+    --     o.ydir = -1
+    -- end
     return o
 end
 
 
-function defensebot:update(dt, enemybots, base)
-    if self.delete then return end
-    self.counter = self.counter + dt
-    if not self:attack(enemybots, base) then
-        self:move(dt)
-    else
-        if(self.counter > self.attackspeed) then
-            self.counter = 0
-            self:shoot()
-        end
-    end
-end
+-- function defensebot:update(dt, enemybots, base)
+--     if self.delete then return end
+--     self.counter = self.counter + dt
+--     if not self:attack(enemybots, base) then
+--         self:move(dt)
+--     else
+--         if(self.counter > self.attackspeed) then
+--             self.counter = 0
+--             self:shoot()
+--         end
+--     end
+-- end
 
-function defensebot:move(dt)
-    if(abs(self.y - self.yvalue) > 3) then
-        self.y = self.y + self.speed*dt*self.ydir
-    end
-    self.x = self.x + self.speed*dt
-    if(self.x > 780) then
-        self.delete = true
-    end
-end
+-- function defensebot:move(dt)
+--     if(abs(self.y - self.yvalue) > 3) then
+--         self.y = self.y + self.speed*dt*self.ydir
+--     end
+--     self.x = self.x + self.speed*dt
+--     if(self.x > 780) then
+--         self.delete = true
+--     end
+-- end
 
 function defensebot:shoot()
     --create bullet

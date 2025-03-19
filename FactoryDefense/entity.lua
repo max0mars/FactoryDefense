@@ -6,8 +6,8 @@ function entity:new(x, y, health, tag)
     o = {}
     setmetatable(o, self)
 
-    o.x = 0
-    o.y = 0
+    o.x = x
+    o.y = y
     o.delete = falses
     o.health = 100
     o.tag = tag

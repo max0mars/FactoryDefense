@@ -1,6 +1,6 @@
-requrie('entity')
+require('entity')
 
-robot = setmetatable({}, entity)
+robot = setmetatable({}, {__index = robot})
 robot.__index = robot
 
 function robot:new(x, y, health, tag, bullets)

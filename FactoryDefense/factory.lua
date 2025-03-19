@@ -12,7 +12,7 @@ function factory.new(self, x, y, w, h)
     o = {}
     setmetatable(o, self)
     self.__index = self
-    o.metal = 0
+    o.metal = 100
     o.x = x
     o.y = y
     o.w = w
