@@ -3,7 +3,7 @@ entity.__index = entity
 
 
 function entity:new(x, y, health, tag)
-    o = {}
+    local o = {}
     setmetatable(o, self)
 
     o.x = x
