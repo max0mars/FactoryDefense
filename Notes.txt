@@ -10,6 +10,17 @@ IDEAS:
 - Gameplay could either be rouguelite where if your extractor is destroyed you lose, robots gone forever when dead, etc.
 - progression based gameplay where losing has no penalty just grind easy levels to get stronger.
 
+
+
+
+TODO:
+- learn how to implement full screen.
+- ensure visuals scale properly and are not blurry or stretched (scale to screen resolution)
+
+
+
+
+
 Features to implement:
 
 Step 1: Make Everything Generic and don't be lazy!
