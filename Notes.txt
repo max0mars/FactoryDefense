@@ -1,12 +1,16 @@
+IDEAS:
+- Make it more of an RPG
+    - each 'level' is a planet
+        - Resource extraction planets, Boss fight planets, AI planets (attack instead of defend? to find AI)
+    - use resources to upgrade
+    - collect, build, upgrade robots (classes, abilities, stats, synergy bonuses)
+    - collect turret blueprints to build when defending base, (maybe can be upgraded or maybe static, idk?)
+    - Can build and upgrade parts but have to find 'AIs' to control them
+    - AIs have control robot husks, have different rarities, abilities, tendencies, get bonus stats when paired with parts from a specific class
+- Gameplay could either be rouguelite where if your extractor is destroyed you lose, robots gone forever when dead, etc.
+- progression based gameplay where losing has no penalty just grind easy levels to get stronger.
+
 Features to implement:
-
-- different types of bots (identified by different shapes and colors)
-- factory turrets
-- upgrade screen
-- Different Levels (rougue-lite, complete n levels, mini bosses and final boss)
-
-stat upgrades:
-    have an upgrade table stored in main and an apply upgrade function in the robot table
 
 Need a generic structure for entities as things that can be attacked. Need to have hp and takedamage() funciton. Need to have x and y. Need to have a tag.
 - factories
@@ -17,7 +21,5 @@ Need a generic structure for entities as things that can be attacked. Need to ha
         
 
 
-
 House Cleaning:
 - make buttons and stuff pretty
-- Balance game!!!
