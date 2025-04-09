@@ -1,10 +1,12 @@
 require('entity')
 
-robot = setmetatable({}, {__index = robot})
-robot.__index = robot
+Enemy = setmetatable({}, {__index = Enemy})
+Enemy.__index = entity
+-- Enemy is a subclass of entity
 
-function robot:new(x, y, health, tag, bullets)
-    o = entity:new(x, y, health, tag)
+function Enemy:new(x, y, health, tag, bullets)
+    o = entity:new(tag, x, y, health, 'circle', {radius = 4})
+    setmetatable(o, self)
     o.speed = 50
     o.health = 100
     o.range = 150
@@ -12,14 +14,9 @@ function robot:new(x, y, health, tag, bullets)
     o.damage = 25
     o.bulletSpeed = 500
     o.attackspeed = 1
-
-    o.radius = 4 --maybe the radius is length if it is square shaped?
-
     o.target = nil
     o.bullets = bullets
     o.counter = 0
-
-
     o.color = {
         r = 20,
         g = 200,
@@ -35,12 +32,12 @@ end
 -- targets is a table of entities to attack
 -- base is the base to attack
 
--- First, check if the robot is dead
--- Then, check if the robot has an enemy in range
--- If not, move the robot
--- If so, check if the robot can attack
+-- First, check if the Enemy is dead
+-- Then, check if the Enemy has an enemy in range
+-- If not, move the Enemy
+-- If so, check if the Enemy can attack
 -- If so, shoot
-function robot:update(dt, targets, base)
+function Enemy:update(dt, targets, base)
     if self.delete then return end
     self.counter = self.counter + dt
     if not self:attack(targets, base) then
@@ -58,10 +55,10 @@ end
 -- base is the base to attack
 
 -- first check if targets is nil
--- then check if the robot is in range of the target
+-- then check if the Enemy is in range of the target
 -- if so, set the target to the closest target
--- if base is not nil, check if the robot is in range of the base
-function robot:attack(targets, base)
+-- if base is not nil, check if the Enemy is in range of the base
+function Enemy:attack(targets, base)
     if targets == nil then return false end
     
     self.target = nil
@@ -93,14 +90,14 @@ end
 
 
 -- speed should be positive or negative
--- depending on the direction the robot is moving
-function robot:move(dt)
+-- depending on the direction the Enemy is moving
+function Enemy:move(dt)
     self.x = self.x + self.speed*dt
 end
 
 
 -- default shape is circle outline. Vary in size and color and shape?
-function robot:draw()
+function Enemy:draw()
     love.graphics.setColor(love.math.colorFromBytes(self.color.r, self.color.g, self.color.b))
     love.graphics.circle('line', self.x, self.y, self.radius)
 end

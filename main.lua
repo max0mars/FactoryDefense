@@ -13,65 +13,18 @@ function love.load()
     love.window.setTitle('Factory Defense')
     love.window.setMode(800, 600)
 
-    mine = building:new(20, 200, 30, 30, {r = 139, g = 69, b = 19}, 'm')
-
-    factory = factory:new(100, 200, 50, 300)
-    enemybase = EnemyBase:new(750, 200, 50, 300)
-
-    minebots = {}
-    table.insert(minebots, minebot:new(mine, factory))
-
-    bullets = {}
-    defensebots = {}
-    enemybots = {}
-    buttons = {}
-
     GameState = 0 -- 0 = ingame, 1 = win, 2 = loss
     pause = false
-    upgradeMenu = false
-
-    spawnrate = 0.1
-    waverate = 15
-    wavecount = 1
-    spawnsremaining = 0
-    counter = spawnrate
-    counter2 = waverate
 
     table.insert(minebots, m1)
-
-    table.insert(buttons, button:new(400, 550, 100, 50, 'DefenseBot', 5, function() 
-            table.insert(defensebots, defensebot:new(bullets))
-        end)
-    )
-
-    table.insert(buttons, button:new(0, 550, 100, 50, 'MineBot', 25, function() 
-        table.insert(minebots, minebot:new(mine, factory))
-    end, 1.33)
-    )
-
-    table.insert(buttons, button:new(0, 550, 100, 50, 'Upgrade', 25, function() 
-        --open menu
-        upgradeMenu = not upgradeMenu
-        end
-        )
-    )
-
-    try_again = button:new(400, 500, 100, 50, 'Try Again', 0, function() 
-            init()
-        end)
-
 end
 
 function love.update(dt)
     if(pause) then return end
     if(factory.health <= 0) then GameState = 2 end
-    if(enemybase.health <= 0) then GameState = 1 end
     if(GameState == 0) then
-        for i in ipairs(enemybots) do
-            enemybots[i]:update(dt, defensebots, factory)
-        end
-        for i in ipairs(defensebots) do
-            defensebots[i]:update(dt, enemybots, enemybase)
+        for i in ipairs(Enemies) do
+            Enemies[i]:update(dt, defensebots, factory)
         end
         for i in ipairs(minebots) do
             minebots[i]:update(dt)
@@ -82,7 +35,7 @@ function love.update(dt)
         waveupdate(dt)
         keydown(dt) -- keyboard input for holding down a button
         CleanTable(defensebots)
-        CleanTable(enemybots)
+        CleanTable(Enemies)
         CleanTable(bullets)   
     end 
 end
@@ -102,11 +55,8 @@ function love.draw()
         mine:draw()
         factory:draw()
         enemybase:draw()
-        for i in ipairs(enemybots) do
-            enemybots[i]:draw()
-        end
-        for i in ipairs(defensebots) do
-            defensebots[i]:draw()
+        for i in ipairs(Enemies) do
+            Enemies[i]:draw()
         end
         for i in ipairs(minebots) do
             minebots[i]:draw()
@@ -164,26 +114,11 @@ function waveupdate(dt)
 end
 
 function keydown(dt)
-    if love.keyboard.isDown('1') then
-        counter = counter - dt
-        if(counter < 0) then
-            table.insert(defensebots, defensebot:new(bullets))
-            counter = spawnrate
-        end
-    end
-
-
-    if love.keyboard.isDown('2') then
-        counter2 = counter2 - dt
-        if(counter2 < 0) then
-            table.insert(enemybots, enemybot:new(bullets))
-            counter2 = spawnrate
-        end
-    end
+    
 end
 
 
-function CleanTable(t) -- removes any elements marked for deletion
+function CleanTable(t) -- dereferences any elements marked for deletion
     local j = 1
     n = #t
     for i = 1, n do
@@ -200,40 +135,5 @@ function CleanTable(t) -- removes any elements marked for deletion
 end
 
 function init()
-    mine = building:new(20, 200, 30, 30, {r = 139, g = 69, b = 19}, 'm')
 
-    factory = factory:new(100, 200, 50, 300)
-    enemybase = EnemyBase:new(750, 200, 50, 300)
-
-    minebots = {}
-    table.insert(minebots, minebot:new(mine, factory))
-
-    bullets = {}
-
-    defensebots = {}
-
-    enemybots = {}
-
-    buttons = {}
-
-    GameState = 0 -- 0 = ingame, 1 = win, 2 = loss
-
-    spawnrate = 0.1
-    waverate = 15
-    wavecount = 1
-    spawnsremaining = 0
-    counter = spawnrate
-    counter2 = waverate
-
-    table.insert(minebots, m1)
-
-    table.insert(buttons, button:new(350, 550, 100, 50, 'DefenseBot', 5, function() 
-            table.insert(defensebots, defensebot:new(bullets))
-        end)
-    )
-
-    table.insert(buttons, button:new(150, 550, 100, 50, 'MineBot', 25, function() 
-        table.insert(minebots, minebot:new(mine, factory))
-    end, 1.33)
-    )
 end
