@@ -12,12 +12,21 @@ IDEAS:
 
 Features to implement:
 
-Need a generic structure for entities as things that can be attacked. Need to have hp and takedamage() funciton. Need to have x and y. Need to have a tag.
-- factories
-- make a generic robot class for all robots to inherit from ()
-    How I will implement inheritance:
-        specific bot classes hold all the unique stat values and function overides
-        any functions or stats that are the same across all bots will go in the parent
+Step 1: Make Everything Generic and don't be lazy!
+Add tags to everything
+all objects inhereit from 'Entity'
+Entity:
+    string tag,
+    int Health,
+    int x, y,
+    int hitboxtype, //defines if circle, square, etc.
+    hitboxdimension, //could be radius, width, etc. depending on hitboxtype (maybe tuple depending on hitboxtype)
+    function takeDamage(),
+    bool destroy //signals main to dereference object
+    
+- structures (extractor, enemy base, turrects)
+- enemy-bots
+- heroes
         
 
 
