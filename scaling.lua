@@ -1,8 +1,8 @@
 local scaling = {}
 
 -- Default values for the drawing area
-scaling.DRAW_WIDTH = 512
-scaling.DRAW_HEIGHT = 448
+scaling.DRAW_WIDTH = 800
+scaling.DRAW_HEIGHT = 600
 scaling.PIXEL_SCALE = 1
 scaling.DRAW_SCALE = 1
 scaling.LEFT_OFFSET = 0
@@ -18,7 +18,10 @@ end
 -- Recalculate scaling and offsets based on window size
 function scaling.recalculate()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
-
+    
+    print("Drawing area: " .. scaling.DRAW_WIDTH .. "x" .. scaling.DRAW_HEIGHT)
+    print("Window size: " .. w .. "x" .. h)
+    
     -- Calculate scaling factors
     local scaleHorizontal = w / scaling.DRAW_WIDTH
     local scaleVertical = h / scaling.DRAW_HEIGHT
