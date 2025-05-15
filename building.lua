@@ -1,8 +1,9 @@
 building = {}
+building.__index = entity
 font = love.graphics.newFont()
 
-function building.new(self, x, y, w, h, color, name)
-    o = {}
+function building:new(tag, x, y, health, hitboxType, hitboxdimensions, color, name)
+    o = entity:new(tag, x, y, 'rectangle', hitboxdimensions)
     setmetatable(o, self)
     self.__index = self
 
