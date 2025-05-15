@@ -12,7 +12,7 @@ local args = {
 
 function love.load()
     love.window.setTitle('Factory Defense')
-    love.window.setMode(800, 600)
+    love.window.setMode(800, 600, {resizable=true})
     scaling.init(800, 600)
     CurrentScene:load()
 
@@ -23,14 +23,16 @@ end
 
 function love.update(dt)
     CurrentScene:update(dt, args)
+    scaling.recalculate()
 end
 
 function love.draw()
     if(args.scalingreset == 1) then
-        scaling.recalculate()
+        scaling.init()
         args.scalingreset = 0
     end
     scaling.applyTransform()
+
     CurrentScene:draw()
     scaling.resetTransform()
 end

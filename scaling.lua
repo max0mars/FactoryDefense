@@ -19,9 +19,6 @@ end
 function scaling.recalculate()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
     
-    print("Drawing area: " .. scaling.DRAW_WIDTH .. "x" .. scaling.DRAW_HEIGHT)
-    print("Window size: " .. w .. "x" .. h)
-    
     -- Calculate scaling factors
     local scaleHorizontal = w / scaling.DRAW_WIDTH
     local scaleVertical = h / scaling.DRAW_HEIGHT

@@ -5,8 +5,8 @@ function StartScene:load()
     -- Available window sizes
     self.windowSizes = {
         { width = 800, height = 600, label = "800x600" },
-        { width = 1280, height = 720, label = "1280x720" },
-        { width = 1600, height = 900, label = "1600x900" }
+        { width = 1280, height = 800, label = "1280x800" },
+        { width = 1920, height = 1080, label = "1920x1080" }
     }
     
     self.buttons = {
@@ -86,19 +86,21 @@ function StartScene:update(dt, args)
 end
 
 function StartScene:draw()
-    love.graphics.clear(0.1, 0.1, 0.1) -- Background color
+    love.graphics.clear(0, 0, 0) -- Background color
+    love.graphics.setColor(0.2, 0.2, 0.2) -- Dark gray for the background
+    love.graphics.rectangle("fill", 0, 0, 800, 600)
     local font = love.graphics.newFont(32)
     love.graphics.setFont(font)
     
     if self.showWindowSizes then
         -- Draw window size selection screen
         love.graphics.setColor(1, 1, 1)
-        love.graphics.printf("Select Window Size", 0, 50, love.graphics.getWidth(), "center")
+        love.graphics.printf("Select Window Size", 0, 50, 800, "center")
         
         -- Draw navigation hint
         local smallFont = love.graphics.newFont(16)
         love.graphics.setFont(smallFont)
-        love.graphics.printf("Use LEFT/RIGHT to select, ENTER to confirm, ESC to cancel", 0, 100, love.graphics.getWidth(), "center")
+        love.graphics.printf("Use LEFT/RIGHT to select, ENTER to confirm, ESC to cancel", 0, 100, 800, "center")
         
         -- Draw window size options
         love.graphics.setFont(font)
@@ -109,7 +111,7 @@ function StartScene:draw()
                 love.graphics.setColor(0.7, 0.7, 0.7) -- Default color
             end
             
-            local x = (love.graphics.getWidth() / (#self.windowSizes + 1)) * i
+            local x = (800 / (#self.windowSizes + 1)) * i
             love.graphics.printf(size.label, x - 100, 200, 200, "center")
         end
     else
@@ -127,7 +129,7 @@ function StartScene:draw()
                 buttonText = button.label .. " (" .. self.windowSizes[self.currentWindowSizeIndex].label .. ")"
             end
             
-            love.graphics.printf(buttonText, 0, 100 + (i - 1) * 60, love.graphics.getWidth(), "center")
+            love.graphics.printf(buttonText, 0, 100 + (i - 1) * 60, 800, "center")
         end
     end
 end
