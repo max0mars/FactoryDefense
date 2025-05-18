@@ -12,8 +12,8 @@ local args = {
 
 function love.load()
     love.window.setTitle('Factory Defense')
-    love.window.setMode(800, 600, {resizable=true})
-    scaling.init(800, 600)
+    love.window.setMode(1280, 800, {resizable=true})
+    scaling.init(1280, 800)
     CurrentScene:load()
 
     GameState = 0 -- 0 = ingame, 1 = win, 2 = loss
@@ -23,12 +23,11 @@ end
 
 function love.update(dt)
     CurrentScene:update(dt, args)
-    scaling.recalculate()
 end
 
 function love.draw()
     if(args.scalingreset == 1) then
-        scaling.init()
+        scaling.recalculate()
         args.scalingreset = 0
     end
     scaling.applyTransform()

@@ -1,4 +1,5 @@
 local StartScene = {
+    r,g,b = 0,0,0
 }
 
 function StartScene:load()
@@ -6,7 +7,7 @@ function StartScene:load()
     self.windowSizes = {
         { width = 800, height = 600, label = "800x600" },
         { width = 1280, height = 800, label = "1280x800" },
-        { width = 1920, height = 1080, label = "1920x1080" }
+        { width = 2560, height = 1600, label = "2560x1600" }
     }
     
     self.buttons = {
@@ -18,7 +19,7 @@ function StartScene:load()
     self.selected = 1
     self.sizeSelected = 1 -- Default selected window size
     self.showWindowSizes = false -- Whether to show window size selection
-    self.currentWindowSizeIndex = 1 -- Track current window size
+    self.currentWindowSizeIndex = 2 -- Track current window size
     
     -- Find current window size in the list
     local w, h = love.window.getMode()
@@ -50,18 +51,19 @@ function StartScene:update(dt, args)
     -- Handle input for navigating the menu
     if cooldown <= 0 then
         if self.showWindowSizes then
-            -- Window size selection mode
-            if love.keyboard.isDown("left") then
+            -- Window size selection mode - changed to up/down controls
+            if love.keyboard.isDown("up") then
                 cooldown = cooldownTime
                 self.sizeSelected = self.sizeSelected > 1 and self.sizeSelected - 1 or #self.windowSizes
-            elseif love.keyboard.isDown("right") then
+            elseif love.keyboard.isDown("down") then
                 cooldown = cooldownTime
                 self.sizeSelected = self.sizeSelected < #self.windowSizes and self.sizeSelected + 1 or 1
             elseif love.keyboard.isDown("return") then
                 cooldown = cooldownTime
                 -- Apply the selected window size
+                args.scalingreset = 1 -- Reset scaling
                 local size = self.windowSizes[self.sizeSelected]
-                love.window.setMode(size.width, size.height)
+                love.window.setMode(size.width, size.height, {resizable=true})
                 self.currentWindowSizeIndex = self.sizeSelected
                 self.showWindowSizes = false -- Hide window size selection
                 args.scalingreset = 1 -- Trigger scaling recalculation in main.lua
@@ -86,39 +88,44 @@ function StartScene:update(dt, args)
 end
 
 function StartScene:draw()
-    love.graphics.clear(0, 0, 0) -- Background color
-    love.graphics.setColor(0.2, 0.2, 0.2) -- Dark gray for the background
-    love.graphics.rectangle("fill", 0, 0, 800, 600)
-    local font = love.graphics.newFont(32)
+    love.graphics.clear(0.2, 0.2, 0.2) -- Background color
+    love.graphics.setColor(0, 0, 0) -- black for the background
+    love.graphics.rectangle("fill", 0, 0, 1280, 800)
+    
+    -- Draw neon glow effect around the edges
+    self:drawNeonEdges()
+    
+    local font = love.graphics.newFont(45)
     love.graphics.setFont(font)
     
     if self.showWindowSizes then
         -- Draw window size selection screen
         love.graphics.setColor(1, 1, 1)
-        love.graphics.printf("Select Window Size", 0, 50, 800, "center")
+        love.graphics.printf("Select Window Size", 0, 50, 1280, "center")
         
         -- Draw navigation hint
         local smallFont = love.graphics.newFont(16)
         love.graphics.setFont(smallFont)
-        love.graphics.printf("Use LEFT/RIGHT to select, ENTER to confirm, ESC to cancel", 0, 100, 800, "center")
+        love.graphics.printf("Use UP/DOWN to select, ENTER to confirm, ESC to cancel", 0, 120, 1280, "center")
         
-        -- Draw window size options
+        -- Draw window size options in a vertical list
         love.graphics.setFont(font)
         for i, size in ipairs(self.windowSizes) do
             if i == self.sizeSelected then
-                love.graphics.setColor(1, 1, 0) -- Highlight selected size
+                love.graphics.setColor(self.r, self.g, self.b) -- Highlight selected size with neon color
             else
                 love.graphics.setColor(0.7, 0.7, 0.7) -- Default color
             end
             
-            local x = (800 / (#self.windowSizes + 1)) * i
-            love.graphics.printf(size.label, x - 100, 200, 200, "center")
+            -- Calculate vertical position for each option
+            local y = 200 + (i - 1) * 80
+            love.graphics.printf(size.label, 0, y, 1280, "center")
         end
     else
         -- Draw main menu
         for i, button in ipairs(self.buttons) do
             if i == self.selected then
-                love.graphics.setColor(1, 1, 0) -- Highlight selected button
+                love.graphics.setColor(self.r, self.g, self.b) -- Highlight selected button
             else
                 love.graphics.setColor(1, 1, 1) -- Default button color
             end
@@ -129,9 +136,71 @@ function StartScene:draw()
                 buttonText = button.label .. " (" .. self.windowSizes[self.currentWindowSizeIndex].label .. ")"
             end
             
-            love.graphics.printf(buttonText, 0, 100 + (i - 1) * 60, 800, "center")
+            love.graphics.printf(buttonText, 0, 100 + (i - 1) * 120, 1280, "center")
         end
     end
+end
+
+-- Add this new method to draw the neon glow edges
+function StartScene:drawNeonEdges()
+    -- Get window dimensions
+    local width = 1280
+    local height = 800
+    local borderWidth = 5
+    local glowSize = 20
+    
+    -- Time-based color pulsing and transitioning effect
+    local time = love.timer.getTime()
+    local pulse = (math.sin(time * 1.5) + 1) * 0.3 + 0.4 -- Value between 0.4 and 1.0
+    
+    -- Cycle through colors over time (slow transition)
+    local colorSpeed = 0.2 -- Controls how fast colors change
+    self.r = math.sin(time * colorSpeed) * 0.5 + 0.5
+    self.g = math.sin(time * colorSpeed + 2.1) * 0.5 + 0.5
+    self.b = math.sin(time * colorSpeed + 4.2) * 0.5 + 0.5
+    
+    -- Top edge glow
+    for i = 0, glowSize, 1 do
+        local alpha = 1 - (i / glowSize)
+        love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
+        love.graphics.rectangle("fill", 0, i, width, 1)
+    end
+    
+    -- Bottom edge glow
+    for i = 0, glowSize, 1 do
+        local alpha = 1 - (i / glowSize)
+        love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
+        love.graphics.rectangle("fill", 0, height - i, width, 1)
+    end
+    
+    -- Left edge glow
+    for i = 0, glowSize, 1 do
+        local alpha = 1 - (i / glowSize)
+        love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
+        love.graphics.rectangle("fill", i, 0, 1, height)
+    end
+    
+    -- Right edge glow
+    for i = 0, glowSize, 1 do
+        local alpha = 1 - (i / glowSize)
+        love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
+        love.graphics.rectangle("fill", width - i, 0, 1, height)
+    end
+    
+    -- Draw solid borders for contrast
+    love.graphics.setColor(self.r, self.g, self.b, 1) -- Solid color at full intensity
+    
+    -- Top border
+    love.graphics.rectangle("fill", 0, 0, width, borderWidth)
+    
+    -- Bottom border
+    love.graphics.rectangle("fill", 0, height - borderWidth, width, borderWidth)
+    
+    -- Left border
+    love.graphics.rectangle("fill", 0, 0, borderWidth, height)
+    
+    -- Right border
+    love.graphics.rectangle("fill", width - borderWidth, 0, borderWidth, height)
 end
 
 return StartScene
