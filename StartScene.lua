@@ -2,6 +2,9 @@ local StartScene = {
     r,g,b = 0,0,0
 }
 
+local buttonSpacing = 70
+local button_yOffset = 400
+
 function StartScene:load()
     -- Available window sizes
     self.windowSizes = {
@@ -15,9 +18,10 @@ function StartScene:load()
     self.sfxVolume = 50
     
     self.buttons = {
-        { label = "Start", action = function() print("Start Game") end },
+        { label = "New Game", action = function() print("Start Game") end },
+        { label = "Load Game", action = function() print("Load Game") end },
         { label = "Window Size", action = function() self:toggleWindowSizeSelection() end },
-        { label = "Sound Settings", action = function() self:toggleSoundSettings() end },
+        { label = "Volume", action = function() self:toggleSoundSettings() end },
         { label = "Quit", action = function() love.event.quit() end }
     }
     
@@ -138,6 +142,9 @@ function StartScene:draw()
     
     -- Draw neon glow effect around the edges
     self:drawNeonEdges()
+
+    -- Draw center pulsing circle
+    self:drawNeonCircle()
     
     local font = love.graphics.newFont(45)
     love.graphics.setFont(font)
@@ -200,13 +207,70 @@ function StartScene:draw()
             
             -- Show current window size next to the Window Size button
             local buttonText = button.label
-            if i == 2 then -- Window Size button
+            if i == 3 then -- Window Size button
                 buttonText = button.label .. " (" .. self.windowSizes[self.currentWindowSizeIndex].label .. ")"
             end
             
-            love.graphics.printf(buttonText, 0, 100 + (i - 1) * 120, 1280, "center")
+            love.graphics.printf(buttonText, 0, button_yOffset + (i - 1) * buttonSpacing, 1280, "center")
         end
     end
+end
+
+-- Add this new method to draw a pulsing neon circle in the center
+function StartScene:drawNeonCircle()
+    local centerX, centerY = 640, 250 -- Center of the screen (top area)
+    local time = love.timer.getTime()
+    
+    -- Base radius with breathing effect
+    local baseRadius = 120
+    local breathSpeed = 0.8
+    local breathAmount = 10
+    local radius = baseRadius + math.sin(time * breathSpeed) * breathAmount
+    
+    -- Pulse for glow intensity (similar to edge effect)
+    local pulse = (math.sin(time * 1.5) + 1) * 0.3 + 0.4
+    
+    -- Draw multiple circles with decreasing alpha for glow effect
+    for i = 30, 0, -1 do
+        local alpha = (i / 30) * pulse
+        local extraRadius = (30 - i) * 1.2
+        
+        love.graphics.setColor(self.r, self.g, self.b, alpha)
+        love.graphics.circle("fill", centerX, centerY, radius + extraRadius)
+    end
+    
+    -- Draw solid inner circle
+    love.graphics.setColor(0, 0, 0) -- Black center
+    love.graphics.circle("fill", centerX, centerY, radius - 10)
+    
+    -- Draw thin circle outline
+    love.graphics.setColor(self.r, self.g, self.b, 1)
+    love.graphics.circle("line", centerX, centerY, radius)
+    love.graphics.circle("line", centerX, centerY, radius - 5)
+    
+    -- Optional: Add some "rays" for extra effect
+    local rayCount = 8
+    local rayLength = 40
+    local rayWidth = 3
+    
+    for i = 1, rayCount do
+        local angle = (i / rayCount) * math.pi * 2 + time * 0.5 -- Rotate rays slowly
+        local rayX1 = centerX + math.cos(angle) * (radius + 5)
+        local rayY1 = centerY + math.sin(angle) * (radius + 5)
+        local rayX2 = centerX + math.cos(angle) * (radius + rayLength)
+        local rayY2 = centerY + math.sin(angle) * (radius + rayLength)
+        
+        -- Draw with decreasing alpha
+        for j = rayWidth, 1, -1 do
+            local alpha = (j / rayWidth) * pulse
+            love.graphics.setColor(self.r, self.g, self.b, alpha)
+            love.graphics.setLineWidth(j)
+            love.graphics.line(rayX1, rayY1, rayX2, rayY2)
+        end
+    end
+    
+    -- Reset line width for other drawing operations
+    love.graphics.setLineWidth(1)
 end
 
 -- Add this new method to draw the neon glow edges

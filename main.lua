@@ -6,30 +6,38 @@ local scaling = require('scaling')
 
 local CurrentScene = Start
 local args = {
-    scalingreset = 0
+	scalingreset = 0,
+	newScene = nil,
+	sceneData = nil
 }
 
 function love.load()
-    love.window.setTitle('Factory Defense')
-    love.window.setMode(1280, 800, {resizable=true})
-    scaling.init(1280, 800)
-    CurrentScene:load()
-    pause = false
+	love.window.setTitle('Factory Defense')
+	love.window.setMode(1280, 800, {resizable=true})
+	scaling.init(1280, 800)
+	CurrentScene:load()
+	pause = false
 end
 
 function love.update(dt)
-    CurrentScene:update(dt, args)
+	CurrentScene:update(dt, args)
+	if args.newScene then
+		CurrentScene = args.newScene
+		args.newScene = nil
+		args.scalingreset = 1
+		CurrentScene:load(args.sceneData)
+		args.sceneData = nil
+	end
 end
 
 function love.draw()
-    if(args.scalingreset == 1) then
-        scaling.recalculate()
-        args.scalingreset = 0
-    end
-    scaling.applyTransform()
-
-    CurrentScene:draw()
-    scaling.resetTransform()
+	if(args.scalingreset == 1) then
+		scaling.recalculate()
+		args.scalingreset = 0
+	end
+	scaling.applyTransform()
+	CurrentScene:draw()
+	scaling.resetTransform()
 end
 
 -- function CleanTable(t) -- dereferences any elements marked for deletion
