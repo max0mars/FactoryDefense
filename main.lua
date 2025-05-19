@@ -6,7 +6,6 @@ local scaling = require('scaling')
 
 local CurrentScene = Start
 local args = {
-    -- Add any arguments you want to pass to the scene here
     scalingreset = 0
 }
 
@@ -15,10 +14,7 @@ function love.load()
     love.window.setMode(1280, 800, {resizable=true})
     scaling.init(1280, 800)
     CurrentScene:load()
-
-    GameState = 0 -- 0 = ingame, 1 = win, 2 = loss
     pause = false
-
 end
 
 function love.update(dt)

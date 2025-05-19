@@ -10,15 +10,22 @@ function StartScene:load()
         { width = 2560, height = 1600, label = "2560x1600" }
     }
     
+    -- Add volume settings with default values
+    self.musicVolume = 50
+    self.sfxVolume = 50
+    
     self.buttons = {
         { label = "Start", action = function() print("Start Game") end },
         { label = "Window Size", action = function() self:toggleWindowSizeSelection() end },
+        { label = "Sound Settings", action = function() self:toggleSoundSettings() end },
         { label = "Quit", action = function() love.event.quit() end }
     }
     
     self.selected = 1
     self.sizeSelected = 1 -- Default selected window size
+    self.soundOptionSelected = 1 -- Default sound option (1 = Music, 2 = SFX)
     self.showWindowSizes = false -- Whether to show window size selection
+    self.showSoundSettings = false -- Whether to show sound settings
     self.currentWindowSizeIndex = 2 -- Track current window size
     
     -- Find current window size in the list
@@ -35,8 +42,15 @@ local last = 0
 local cooldownTime = 0.2
 local cooldown = 0
 
+function StartScene:toggleSoundSettings()
+    self.showSoundSettings = not self.showSoundSettings
+    self.showWindowSizes = false
+    self.soundOptionSelected = 1 -- Default to Music volume
+end
+
 function StartScene:toggleWindowSizeSelection()
     self.showWindowSizes = not self.showWindowSizes
+    self.showSoundSettings = false
     if self.showWindowSizes then
         self.sizeSelected = self.currentWindowSizeIndex
     end
@@ -70,6 +84,36 @@ function StartScene:update(dt, args)
             elseif love.keyboard.isDown("escape") then
                 cooldown = cooldownTime
                 self.showWindowSizes = false -- Hide window size selection without changing
+            end
+        elseif self.showSoundSettings then
+            -- Sound settings navigation
+            if love.keyboard.isDown("up") then
+                cooldown = cooldownTime
+                self.soundOptionSelected = self.soundOptionSelected > 1 and self.soundOptionSelected - 1 or 2
+            elseif love.keyboard.isDown("down") then
+                cooldown = cooldownTime
+                self.soundOptionSelected = self.soundOptionSelected < 2 and self.soundOptionSelected + 1 or 1
+            elseif love.keyboard.isDown("left") then
+                cooldown = cooldownTime
+                if self.soundOptionSelected == 1 then
+                    self.musicVolume = self.musicVolume - 10
+                    if self.musicVolume < 0 then self.musicVolume = 0 end
+                else
+                    self.sfxVolume = self.sfxVolume - 10
+                    if self.sfxVolume < 0 then self.sfxVolume = 0 end
+                end
+            elseif love.keyboard.isDown("right") then
+                cooldown = cooldownTime
+                if self.soundOptionSelected == 1 then
+                    self.musicVolume = self.musicVolume + 10
+                    if self.musicVolume > 100 then self.musicVolume = 100 end
+                else
+                    self.sfxVolume = self.sfxVolume + 10
+                    if self.sfxVolume > 100 then self.sfxVolume = 100 end
+                end
+            elseif love.keyboard.isDown("escape") then
+                cooldown = cooldownTime
+                self.showSoundSettings = false -- Hide sound settings without changing
             end
         else
             -- Main menu navigation
@@ -120,6 +164,30 @@ function StartScene:draw()
             -- Calculate vertical position for each option
             local y = 200 + (i - 1) * 80
             love.graphics.printf(size.label, 0, y, 1280, "center")
+        end
+    elseif self.showSoundSettings then
+        -- Draw sound settings screen
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf("Sound Settings", 0, 50, 1280, "center")
+        
+        -- Draw navigation hint
+        local smallFont = love.graphics.newFont(16)
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Use UP/DOWN to select, ENTER to adjust, ESC to cancel", 0, 120, 1280, "center")
+        
+        -- Draw sound options in a vertical list
+        love.graphics.setFont(font)
+        local soundOptions = { "Music Volume: " .. self.musicVolume, "SFX Volume: " .. self.sfxVolume }
+        for i, option in ipairs(soundOptions) do
+            if i == self.soundOptionSelected then
+                love.graphics.setColor(self.r, self.g, self.b) -- Highlight selected option with neon color
+            else
+                love.graphics.setColor(0.7, 0.7, 0.7) -- Default color
+            end
+            
+            -- Calculate vertical position for each option
+            local y = 200 + (i - 1) * 80
+            love.graphics.printf(option, 0, y, 1280, "center")
         end
     else
         -- Draw main menu
