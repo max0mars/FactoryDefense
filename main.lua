@@ -2,6 +2,7 @@ require('button')
 
 local Start = require('StartScene')
 local scaling = require('scaling')
+local GameScene = require('GameScene')
 --io.stdout:setvbuf("no") May or may not be needed for print statements
 
 local CurrentScene = Start
@@ -21,8 +22,8 @@ end
 
 function love.update(dt)
 	CurrentScene:update(dt, args)
-	if args.newScene then
-		CurrentScene = args.newScene
+	if args.newScene == "NewGame" then
+		CurrentScene = GameScene
 		args.newScene = nil
 		args.scalingreset = 1
 		CurrentScene:load(args.sceneData)

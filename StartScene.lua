@@ -18,8 +18,8 @@ function StartScene:load()
     self.sfxVolume = 50
     
     self.buttons = {
-        { label = "New Game", action = function() print("Start Game") end },
-        { label = "Load Game", action = function() print("Load Game") end },
+        { label = "New Game", action = function(args) self:NewGame(args) end },
+        { label = "Load Game", action = function(args) self:LoadGame(args) end },
         { label = "Window Size", action = function() self:toggleWindowSizeSelection() end },
         { label = "Volume", action = function() self:toggleSoundSettings() end },
         { label = "Quit", action = function() love.event.quit() end }
@@ -40,6 +40,16 @@ function StartScene:load()
             break
         end
     end
+end
+
+function StartScene:NewGame(args)
+    -- Placeholder for starting a new game
+    args.newScene = "NewGame"
+end
+
+function StartScene:LoadGame(args)
+    -- Placeholder for loading a game
+    args.newScene = "LoadGame"
 end
 
 local last = 0
@@ -129,7 +139,7 @@ function StartScene:update(dt, args)
                 self.selected = self.selected < #self.buttons and self.selected + 1 or 1
             elseif love.keyboard.isDown("return") then
                 cooldown = cooldownTime
-                self.buttons[self.selected].action()
+                self.buttons[self.selected].action(args)
             end
         end
     end
