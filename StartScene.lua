@@ -146,7 +146,6 @@ function StartScene:update(dt, args)
 end
 
 function StartScene:draw()
-    love.graphics.clear(0.2, 0.2, 0.2) -- Background color
     love.graphics.setColor(0, 0, 0) -- black for the background
     love.graphics.rectangle("fill", 0, 0, 1280, 800)
     

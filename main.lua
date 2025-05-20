@@ -4,6 +4,7 @@ local Start = require('StartScene')
 local scaling = require('scaling')
 local GameScene = require('GameScene')
 --io.stdout:setvbuf("no") May or may not be needed for print statements
+local defaultDimensions = {width = 1280, height = 800}
 
 local CurrentScene = Start
 local args = {
@@ -14,8 +15,8 @@ local args = {
 
 function love.load()
 	love.window.setTitle('Factory Defense')
-	love.window.setMode(1280, 800, {resizable=true})
-	scaling.init(1280, 800)
+	love.window.setMode(defaultDimensions.width, defaultDimensions.height, {resizable=true})
+	scaling.init(defaultDimensions.width, defaultDimensions.height)
 	CurrentScene:load()
 	pause = false
 end
@@ -32,6 +33,7 @@ function love.update(dt)
 end
 
 function love.draw()
+    love.graphics.clear(0.2, 0.2, 0.2)
 	if(args.scalingreset == 1) then
 		scaling.recalculate()
 		args.scalingreset = 0
