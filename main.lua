@@ -1,5 +1,5 @@
-local Start = require('Scripts/StartScene')
-local scaling = require('Scripts/scaling')
+local Start = require('./Scripts/StartScene')
+local scaling = require('./Scripts/scaling')
 --io.stdout:setvbuf("no") May or may not be needed for print statements
 
 local CurrentScene = Start

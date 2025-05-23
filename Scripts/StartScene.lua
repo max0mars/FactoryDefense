@@ -1,25 +1,53 @@
 local StartScene = {
-    state
+    state,
+    timer,
+    logo,
+    title
 }
 local LOGO = 0
 local TITLE = 1
 local OPTIONS = 2
 local QUIT = 3
-local logo = {}
-logo.fadein = 1
-logo.hold = 2
-logo.fadeout = 1
-local title = {}
-title.fadein = 0.5
+
 
 function StartScene:load()
-    --logo.img = love.graphics.newImage('../Images/Logo.JPEG')
-    --title.img = love.graphics.newImage('../Images/Title.JPEG')
+    self.logo = {}
+    self.logo.fadein = 1
+    self.logo.hold = 2
+    self.logo.fadeout = 1
+    self.logo.state = 0
+    self.logo.fadeAmount
+    
+    self.title = {}
+    self.logo.img = love.graphics.newImage('Images/Logo.JPEG')
+    self.title = {}
+    self.title.fadein = 0.5
+    self.title.img = love.graphics.newImage('Images/Title.JPEG')
     self.state = 0
+    self.timer = logo.fadein
 end
 
 function StartScene:update(dt, args)
-
+    if(self.state == LOGO){
+        self.timer = self.timer - dt
+        if(self.logo.state == 0) then
+            self.logo.fadeAmount = self.logo.fadein - self.timer/self.logo.fadein
+            if(timer <= 0) then
+                self.logo.state = 1
+                self.timer = logo.hold
+            end
+        else if(self.logo.state == 1) then -- logo hold
+            if(self.timer <= 0) then
+                self.logo.state = 2
+                self.timer = self.logo.fadeout
+            end
+        else(logo.state == 2) then -- logo fadeout
+            self.logo.fadeAmount = self.timer/self.logo.fadeout
+            if(self.timer <= 0) then
+                self.state = TITLE
+            end
+        end
+    }
 end
 
 function StartScene:draw()
