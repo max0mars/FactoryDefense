@@ -10,48 +10,85 @@ local OPTIONS = 2
 local QUIT = 3
 
 
-function StartScene:load()
+function StartScene:load(width, height)
+    self.width = width
+    self.height = height
     self.logo = {}
     self.logo.fadein = 1
     self.logo.hold = 2
     self.logo.fadeout = 1
     self.logo.state = 0
-    self.logo.fadeAmount
-    
-    self.title = {}
+    self.logo.fadeAmount = 0
     self.logo.img = love.graphics.newImage('Images/Logo.JPEG')
     self.title = {}
-    self.title.fadein = 0.5
+    self.title.fadein = 4
+    self.title.fadeAmount = 0
+    self.title.state = 0
     self.title.img = love.graphics.newImage('Images/Title.JPEG')
     self.state = 0
-    self.timer = logo.fadein
+    self.timer = self.logo.fadein
+    self.buttons = {}
 end
 
 function StartScene:update(dt, args)
-    if(self.state == LOGO){
+    if(self.state == LOGO) then
         self.timer = self.timer - dt
         if(self.logo.state == 0) then
-            self.logo.fadeAmount = self.logo.fadein - self.timer/self.logo.fadein
-            if(timer <= 0) then
+            self.logo.fadeAmount = 1 - self.timer/self.logo.fadein
+            if(self.timer <= 0) then
                 self.logo.state = 1
-                self.timer = logo.hold
+                self.timer = self.logo.hold
             end
-        else if(self.logo.state == 1) then -- logo hold
+        elseif(self.logo.state == 1) then -- logo hold
             if(self.timer <= 0) then
                 self.logo.state = 2
                 self.timer = self.logo.fadeout
             end
-        else(logo.state == 2) then -- logo fadeout
+        elseif(self.logo.state == 2) then -- logo fadeout
             self.logo.fadeAmount = self.timer/self.logo.fadeout
             if(self.timer <= 0) then
                 self.state = TITLE
+                self.timer = self.title.fadein
             end
         end
-    }
+    elseif(self.state == TITLE) then
+        self.timer = self.timer - dt
+        if(self.title.state == 0) then
+            self.title.fadeAmount = 1 - self.timer/self.title.fadein
+            if(self.timer <= 0) then
+                self.title.state = 1
+            end
+        elseif(self.title.state == 1) then -- logo hold
+            for _, button in pairs(self.buttons) do
+                button.hovered = button.checkhover(x, y)
+            end
+        end
+    end
 end
 
 function StartScene:draw()
+    if(self.state == LOGO) then
+        love.graphics.setColor(255, 255, 255, self.logo.fadeAmount)
+        love.graphics.draw(self.logo.img, 300, 80)
+    elseif (self.state == TITLE) then
+        love.graphics.setColor(255, 255, 255, self.title.fadeAmount)
+        love.graphics.draw(self.title.img, 200, 0)
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.print('Mouse = (' .. love.mouse.getX() .. ', ' .. love.mouse.getY() .. ')', 0, 0)
+    elseif (self.state == OPTIONS) then
 
+    else
+
+    end
+end
+
+--(490, 528)
+
+--get table of buttons, button has a function that checks if mouse is inside
+
+
+function StartScene:mousepressed(x, y, buttonPressed)
+    
 end
 
 return StartScene

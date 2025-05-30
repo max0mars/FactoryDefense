@@ -2,6 +2,9 @@ local Start = require('./Scripts/StartScene')
 local scaling = require('./Scripts/scaling')
 --io.stdout:setvbuf("no") May or may not be needed for print statements
 
+local width = 1280
+local height = 800
+
 local CurrentScene = Start
 local args = {
 	scalingreset = 0,
@@ -11,9 +14,9 @@ local args = {
 
 function love.load()
 	love.window.setTitle('Factory Defense')
-	love.window.setMode(1280, 800, {resizable=true})
-	scaling.init(1280, 800)
-	CurrentScene:load()
+	love.window.setMode(width, height, {resizable=true})
+	scaling.init(width, height)
+	CurrentScene:load(width, height)
 	pause = false
 end
 
