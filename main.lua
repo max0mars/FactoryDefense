@@ -41,6 +41,16 @@ function love.draw()
 	scaling.resetTransform()
 end
 
+function love.keypressed(key, scancode, isrepeat)
+	if key == 'escape' then
+		love.event.quit()
+	end
+	CurrentScene:keypressed(key, scancode, isrepeat)
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+	CurrentScene:mousepressed(x, y, button, istouch, presses)
+end
 -- function CleanTable(t) -- dereferences any elements marked for deletion
 --     local j = 1
 --     n = #t

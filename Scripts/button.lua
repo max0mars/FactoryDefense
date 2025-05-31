@@ -1,65 +1,36 @@
 button = {}
 button.__index = button
 
-function button:new(x, y, width, height, text, cost, callback, increment)
+function button:new(x, y, width, height, callback)
     local b = {
         x = x,
         y = y,
         width = width,
         height = height,
-        text = text,
         callback = callback,
-        progress = 0,
-        progressMax = 100,
-        cost = cost,
-        increment = increment or 1
+        hovered = false
     }
     setmetatable(b, button)
     return b
 end
 
-function button:test()
-    print('test')
-end
-
-function button:draw()
-    love.graphics.setColor(0.5, 0.5, 0.5)
-    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(self.text, self.x, self.y + 10, self.width, "center")
-    if self.cost > 0 then
-        love.graphics.printf(self.cost, self.x, self.y + 25, self.width, "center")
+function button:checkClick()
+    if(self.hovered) then
+        return self.callback()
     end
-
-    -- local progressWidth = (self.progress / self.progressMax) * self.width
-    -- love.graphics.setColor(0, 1, 0)
-    -- love.graphics.rectangle('fill', self.x, self.y + self.height + 5, progressWidth, 10)
-    -- love.graphics.setColor(1, 1, 1)
-    -- love.graphics.rectangle('line', self.x, self.y + self.height + 5, self.width, 10)
-end
-
-function button:isClicked(x, y, metal)
-    if x > self.x and x < self.x + self.width and y > self.y and y < self.y + self.height then
-        return true
-    end
-    return false
-end
-
-function button:click(x, y, metal)
-    local metal = metal or 0
-    if self:isClicked(x, y) and self.callback then
-        if metal >= self.cost and self:isClicked(x, y) and self.callback then
-            self.callback()
-            metal = metal - self.cost
-            self.cost = self.cost * self.increment
-            self.cost = round(self.cost, 5)
-        end
-    end
-    return metal
 end
 
 function button:updateProgress(amount)
     self.progress = math.min(self.progress + amount, self.progressMax)
+end
+
+function button:checkhover(x, y)
+    if x >= self.x and x <= self.x + self.width and
+       y >= self.y and y <= self.y + self.height then
+        self.hovered = true
+    else
+        self.hovered = false
+    end
 end
 
 function round(num, factor)
@@ -83,3 +54,5 @@ function round_u(num, factor)
     local dif = num % factor
     return num + factor - dif
 end
+
+return button

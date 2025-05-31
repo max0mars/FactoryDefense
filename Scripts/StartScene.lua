@@ -1,3 +1,5 @@
+local button = require 'Scripts/button'
+
 local StartScene = {
     state,
     timer,
@@ -7,30 +9,57 @@ local StartScene = {
 local LOGO = 0
 local TITLE = 1
 local OPTIONS = 2
-local QUIT = 3
+local debug = false
 
-
+local dragging = 0
+local drag_start = {x = 0, y = 0}
+local drag_end = {x = 0, y = 0}
 function StartScene:load(width, height)
+    love.mouse.setVisible(false)
     self.width = width
     self.height = height
     self.logo = {}
     self.logo.fadein = 1
-    self.logo.hold = 2
+    self.logo.hold = 0
     self.logo.fadeout = 1
     self.logo.state = 0
     self.logo.fadeAmount = 0
     self.logo.img = love.graphics.newImage('Images/Logo.JPEG')
+
+
+
     self.title = {}
-    self.title.fadein = 4
+    self.title.fadein = 2
     self.title.fadeAmount = 0
     self.title.state = 0
     self.title.img = love.graphics.newImage('Images/Title.JPEG')
     self.state = 0
     self.timer = self.logo.fadein
-    self.buttons = {}
+    self.title.buttons = {}
+    table.insert(self.title.buttons, button:new(504, 536, 250, 50, function()
+        print('New Game clicked')
+    end))
+    table.insert(self.title.buttons, button:new(495, 593, 267, 50, function()
+        print('Load Game clicked')
+    end))
+    table.insert(self.title.buttons, button:new(555, 673, 150, 33, function()
+        print('Options clicked')
+        self.state = OPTIONS
+    end))
+    table.insert(self.title.buttons, button:new(586, 709, 80, 25, function()
+        love.event.quit()
+    end))
+
+
+
+    self.options.img = love.graphics.newImage('Images/Options.JPEG')
 end
 
 function StartScene:update(dt, args)
+    if(dragging == 1) then
+        drag_end.x = love.mouse.getX()
+        drag_end.y = love.mouse.getY()
+    end
     if(self.state == LOGO) then
         self.timer = self.timer - dt
         if(self.logo.state == 0) then
@@ -59,8 +88,9 @@ function StartScene:update(dt, args)
                 self.title.state = 1
             end
         elseif(self.title.state == 1) then -- logo hold
-            for _, button in pairs(self.buttons) do
-                button.hovered = button.checkhover(x, y)
+            local mx, my = love.mouse.getPosition()
+            for _, button in pairs(self.title.buttons) do
+                button:checkhover(mx, my)
             end
         end
     end
@@ -73,356 +103,54 @@ function StartScene:draw()
     elseif (self.state == TITLE) then
         love.graphics.setColor(255, 255, 255, self.title.fadeAmount)
         love.graphics.draw(self.title.img, 200, 0)
-        love.graphics.setColor(1, 0, 0)
-        love.graphics.print('Mouse = (' .. love.mouse.getX() .. ', ' .. love.mouse.getY() .. ')', 0, 0)
+        for _, button in pairs(self.title.buttons) do
+            if(button.hovered) then
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.rectangle('line', button.x, button.y, button.width, button.height)
+            end
+        end
     elseif (self.state == OPTIONS) then
 
     else
 
     end
+    if(not love.mouse.isVisible()) then
+        love.graphics.setColor(1, 0, 0, 0.5)
+        love.graphics.circle('fill', love.mouse.getX(), love.mouse.getY(), 4)
+    end
+    if(debug) then
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.rectangle('line', drag_start.x, drag_start.y, drag_end.x - drag_start.x, drag_end.y - drag_start.y)
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.print('Mouse = (' .. love.mouse.getX() .. ', ' .. love.mouse.getY() .. ')', 0, 0)
+        love.graphics.print('pos = (' .. math.min(drag_start.x, drag_end.x) .. ', ' .. math.min(drag_start.y, drag_end.y) .. ')', 0, 20)
+        love.graphics.print('size = (' .. math.abs(drag_end.x - drag_start.x) .. ', ' .. math.abs(drag_end.y - drag_start.y) .. ')', 0, 40)
+        love.graphics.print('dragging = ' .. dragging, 0, 60)
+        love.graphics.print('state = ' .. self.state, 0, 80)
+    end
 end
 
---(490, 528)
-
---get table of buttons, button has a function that checks if mouse is inside
-
+function StartScene:keypressed(key)
+   if key == "tab" then
+        debug = not debug
+   end
+end
 
 function StartScene:mousepressed(x, y, buttonPressed)
-    
+    if (dragging == 0 and buttonPressed == 1 and debug) then
+        dragging = 1
+        drag_start.x = x
+        drag_start.y = y
+        drag_end.x = x
+        drag_end.y = y
+    else
+        dragging = 0
+    end
+    if(self.state == TITLE) then
+        for _, button in pairs(self.title.buttons) do
+            button:checkClick()
+        end
+    end
 end
 
 return StartScene
--- local buttonSpacing = 70
--- local button_yOffset = 400
-
--- function StartScene:load()
---     -- Available window sizes
---     self.windowSizes = {
---         { width = 800, height = 600, label = "800x600" },
---         { width = 1280, height = 800, label = "1280x800" },
---         { width = 2560, height = 1600, label = "2560x1600" }
---     }
-    
---     -- Add volume settings with default values
---     self.musicVolume = 50
---     self.sfxVolume = 50
-    
---     self.buttons = {
---         { label = "New Game", action = function() print("Start Game") end },
---         { label = "Load Game", action = function() print("Load Game") end },
---         { label = "Window Size", action = function() self:toggleWindowSizeSelection() end },
---         { label = "Volume", action = function() self:toggleSoundSettings() end },
---         { label = "Quit", action = function() love.event.quit() end }
---     }
-    
---     self.selected = 1
---     self.sizeSelected = 1 -- Default selected window size
---     self.soundOptionSelected = 1 -- Default sound option (1 = Music, 2 = SFX)
---     self.showWindowSizes = false -- Whether to show window size selection
---     self.showSoundSettings = false -- Whether to show sound settings
---     self.currentWindowSizeIndex = 2 -- Track current window size
-    
---     -- Find current window size in the list
---     local w, h = love.window.getMode()
---     for i, size in ipairs(self.windowSizes) do
---         if size.width == w and size.height == h then
---             self.currentWindowSizeIndex = i
---             break
---         end
---     end
--- end
-
--- local last = 0
--- local cooldownTime = 0.2
--- local cooldown = 0
-
--- function StartScene:toggleSoundSettings()
---     self.showSoundSettings = not self.showSoundSettings
---     self.showWindowSizes = false
---     self.soundOptionSelected = 1 -- Default to Music volume
--- end
-
--- function StartScene:toggleWindowSizeSelection()
---     self.showWindowSizes = not self.showWindowSizes
---     self.showSoundSettings = false
---     if self.showWindowSizes then
---         self.sizeSelected = self.currentWindowSizeIndex
---     end
--- end
-
--- function StartScene:update(dt, args)
---     -- Update cooldown
---     if cooldown > 0 then
---         cooldown = cooldown - dt
---     end
-    
---     -- Handle input for navigating the menu
---     if cooldown <= 0 then
---         if self.showWindowSizes then
---             -- Window size selection mode - changed to up/down controls
---             if love.keyboard.isDown("up") then
---                 cooldown = cooldownTime
---                 self.sizeSelected = self.sizeSelected > 1 and self.sizeSelected - 1 or #self.windowSizes
---             elseif love.keyboard.isDown("down") then
---                 cooldown = cooldownTime
---                 self.sizeSelected = self.sizeSelected < #self.windowSizes and self.sizeSelected + 1 or 1
---             elseif love.keyboard.isDown("return") then
---                 cooldown = cooldownTime
---                 -- Apply the selected window size
---                 args.scalingreset = 1 -- Reset scaling
---                 local size = self.windowSizes[self.sizeSelected]
---                 love.window.setMode(size.width, size.height, {resizable=true})
---                 self.currentWindowSizeIndex = self.sizeSelected
---                 self.showWindowSizes = false -- Hide window size selection
---                 args.scalingreset = 1 -- Trigger scaling recalculation in main.lua
---             elseif love.keyboard.isDown("escape") then
---                 cooldown = cooldownTime
---                 self.showWindowSizes = false -- Hide window size selection without changing
---             end
---         elseif self.showSoundSettings then
---             -- Sound settings navigation
---             if love.keyboard.isDown("up") then
---                 cooldown = cooldownTime
---                 self.soundOptionSelected = self.soundOptionSelected > 1 and self.soundOptionSelected - 1 or 2
---             elseif love.keyboard.isDown("down") then
---                 cooldown = cooldownTime
---                 self.soundOptionSelected = self.soundOptionSelected < 2 and self.soundOptionSelected + 1 or 1
---             elseif love.keyboard.isDown("left") then
---                 cooldown = cooldownTime
---                 if self.soundOptionSelected == 1 then
---                     self.musicVolume = self.musicVolume - 10
---                     if self.musicVolume < 0 then self.musicVolume = 0 end
---                 else
---                     self.sfxVolume = self.sfxVolume - 10
---                     if self.sfxVolume < 0 then self.sfxVolume = 0 end
---                 end
---             elseif love.keyboard.isDown("right") then
---                 cooldown = cooldownTime
---                 if self.soundOptionSelected == 1 then
---                     self.musicVolume = self.musicVolume + 10
---                     if self.musicVolume > 100 then self.musicVolume = 100 end
---                 else
---                     self.sfxVolume = self.sfxVolume + 10
---                     if self.sfxVolume > 100 then self.sfxVolume = 100 end
---                 end
---             elseif love.keyboard.isDown("escape") then
---                 cooldown = cooldownTime
---                 self.showSoundSettings = false -- Hide sound settings without changing
---             end
---         else
---             -- Main menu navigation
---             if love.keyboard.isDown("up") then
---                 cooldown = cooldownTime
---                 self.selected = self.selected > 1 and self.selected - 1 or #self.buttons
---             elseif love.keyboard.isDown("down") then
---                 cooldown = cooldownTime
---                 self.selected = self.selected < #self.buttons and self.selected + 1 or 1
---             elseif love.keyboard.isDown("return") then
---                 cooldown = cooldownTime
---                 self.buttons[self.selected].action()
---             end
---         end
---     end
--- end
-
--- function StartScene:draw()
---     love.graphics.clear(0.2, 0.2, 0.2) -- Background color
---     love.graphics.setColor(0, 0, 0) -- black for the background
---     love.graphics.rectangle("fill", 0, 0, 1280, 800)
-    
---     -- Draw neon glow effect around the edges
---     self:drawNeonEdges()
-
---     -- Draw center pulsing circle
-    
---     local font = love.graphics.newFont(45)
---     love.graphics.setFont(font)
-    
---     if self.showWindowSizes then
---         -- Draw window size selection screen
---         love.graphics.setColor(1, 1, 1)
---         love.graphics.printf("Select Window Size", 0, 50, 1280, "center")
-        
---         -- Draw navigation hint
---         local smallFont = love.graphics.newFont(16)
---         love.graphics.setFont(smallFont)
---         love.graphics.printf("Use UP/DOWN to select, ENTER to confirm, ESC to cancel", 0, 120, 1280, "center")
-        
---         -- Draw window size options in a vertical list
---         love.graphics.setFont(font)
---         for i, size in ipairs(self.windowSizes) do
---             if i == self.sizeSelected then
---                 love.graphics.setColor(self.r, self.g, self.b) -- Highlight selected size with neon color
---             else
---                 love.graphics.setColor(0.7, 0.7, 0.7) -- Default color
---             end
-            
---             -- Calculate vertical position for each option
---             local y = 200 + (i - 1) * 80
---             love.graphics.printf(size.label, 0, y, 1280, "center")
---         end
---     elseif self.showSoundSettings then
---         -- Draw sound settings screen
---         love.graphics.setColor(1, 1, 1)
---         love.graphics.printf("Sound Settings", 0, 50, 1280, "center")
-        
---         -- Draw navigation hint
---         local smallFont = love.graphics.newFont(16)
---         love.graphics.setFont(smallFont)
---         love.graphics.printf("Use UP/DOWN to select, ENTER to adjust, ESC to cancel", 0, 120, 1280, "center")
-        
---         -- Draw sound options in a vertical list
---         love.graphics.setFont(font)
---         local soundOptions = { "Music Volume: " .. self.musicVolume, "SFX Volume: " .. self.sfxVolume }
---         for i, option in ipairs(soundOptions) do
---             if i == self.soundOptionSelected then
---                 love.graphics.setColor(self.r, self.g, self.b) -- Highlight selected option with neon color
---             else
---                 love.graphics.setColor(0.7, 0.7, 0.7) -- Default color
---             end
-            
---             -- Calculate vertical position for each option
---             local y = 200 + (i - 1) * 80
---             love.graphics.printf(option, 0, y, 1280, "center")
---         end
---     else
---         self:drawNeonCircle()
---         -- Draw main menu
---         for i, button in ipairs(self.buttons) do
---             if i == self.selected then
---                 love.graphics.setColor(self.r, self.g, self.b) -- Highlight selected button
---             else
---                 love.graphics.setColor(1, 1, 1) -- Default button color
---             end
-            
---             -- Show current window size next to the Window Size button
---             local buttonText = button.label
---             if i == 3 then -- Window Size button
---                 buttonText = button.label .. " (" .. self.windowSizes[self.currentWindowSizeIndex].label .. ")"
---             end
-            
---             love.graphics.printf(buttonText, 0, button_yOffset + (i - 1) * buttonSpacing, 1280, "center")
---         end
---     end
--- end
-
--- -- Add this new method to draw a pulsing neon circle in the center
--- function StartScene:drawNeonCircle()
---     local centerX, centerY = 640, 225 -- Center of the screen (top area)
---     local time = love.timer.getTime()
-    
---     -- Base radius with breathing effect
---     local baseRadius = 120
---     local breathSpeed = 0.8
---     local breathAmount = 10
---     local radius = baseRadius + math.sin(time * breathSpeed) * breathAmount
-    
---     -- Pulse for glow intensity (similar to edge effect)
---     local pulse = (math.sin(time * 1.5) + 1) * 0.3 + 0.4
-    
---     -- Draw multiple circles with decreasing alpha for glow effect
---     for i = 30, 0, -1 do
---         local alpha = (i / 30) * pulse
---         local extraRadius = (30 - i) * 1.2
-        
---         love.graphics.setColor(self.r, self.g, self.b, alpha)
---         love.graphics.circle("fill", centerX, centerY, radius + extraRadius)
---     end
-    
---     -- Draw solid inner circle
---     love.graphics.setColor(0, 0, 0) -- Black center
---     love.graphics.circle("fill", centerX, centerY, radius - 10)
-    
---     -- Draw thin circle outline
---     love.graphics.setColor(self.r, self.g, self.b, 1)
---     love.graphics.circle("line", centerX, centerY, radius)
---     love.graphics.circle("line", centerX, centerY, radius - 5)
-    
---     -- Optional: Add some "rays" for extra effect
---     local rayCount = 8
---     local rayLength = 40
---     local rayWidth = 3
-    
---     for i = 1, rayCount do
---         local angle = (i / rayCount) * math.pi * 2 + time * 0.5 -- Rotate rays slowly
---         local rayX1 = centerX + math.cos(angle) * (radius + 5)
---         local rayY1 = centerY + math.sin(angle) * (radius + 5)
---         local rayX2 = centerX + math.cos(angle) * (radius + rayLength)
---         local rayY2 = centerY + math.sin(angle) * (radius + rayLength)
-        
---         -- Draw with decreasing alpha
---         for j = rayWidth, 1, -1 do
---             local alpha = (j / rayWidth) * pulse
---             love.graphics.setColor(self.r, self.g, self.b, alpha)
---             love.graphics.setLineWidth(j)
---             love.graphics.line(rayX1, rayY1, rayX2, rayY2)
---         end
---     end
-    
---     -- Reset line width for other drawing operations
---     love.graphics.setLineWidth(1)
--- end
-
--- -- Add this new method to draw the neon glow edges
--- function StartScene:drawNeonEdges()
---     -- Get window dimensions
---     local width = 1280
---     local height = 800
---     local borderWidth = 5
---     local glowSize = 20
-    
---     -- Time-based color pulsing and transitioning effect
---     local time = love.timer.getTime()
---     local pulse = (math.sin(time * 1.5) + 1) * 0.3 + 0.4 -- Value between 0.4 and 1.0
-    
---     -- Cycle through colors over time (slow transition)
---     local colorSpeed = 0.2 -- Controls how fast colors change
---     self.r = math.sin(time * colorSpeed) * 0.5 + 0.5
---     self.g = math.sin(time * colorSpeed + 2.1) * 0.5 + 0.5
---     self.b = math.sin(time * colorSpeed + 4.2) * 0.5 + 0.5
-    
---     -- Top edge glow
---     for i = 0, glowSize, 1 do
---         local alpha = 1 - (i / glowSize)
---         love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
---         love.graphics.rectangle("fill", 0, i, width, 1)
---     end
-    
---     -- Bottom edge glow
---     for i = 0, glowSize, 1 do
---         local alpha = 1 - (i / glowSize)
---         love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
---         love.graphics.rectangle("fill", 0, height - i, width, 1)
---     end
-    
---     -- Left edge glow
---     for i = 0, glowSize, 1 do
---         local alpha = 1 - (i / glowSize)
---         love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
---         love.graphics.rectangle("fill", i, 0, 1, height)
---     end
-    
---     -- Right edge glow
---     for i = 0, glowSize, 1 do
---         local alpha = 1 - (i / glowSize)
---         love.graphics.setColor(self.r, self.g, self.b, pulse * alpha)
---         love.graphics.rectangle("fill", width - i, 0, 1, height)
---     end
-    
---     -- Draw solid borders for contrast
---     love.graphics.setColor(self.r, self.g, self.b, 1) -- Solid color at full intensity
-    
---     -- Top border
---     love.graphics.rectangle("fill", 0, 0, width, borderWidth)
-    
---     -- Bottom border
---     love.graphics.rectangle("fill", 0, height - borderWidth, width, borderWidth)
-    
---     -- Left border
---     love.graphics.rectangle("fill", 0, 0, borderWidth, height)
-    
---     -- Right border
---     love.graphics.rectangle("fill", width - borderWidth, 0, borderWidth, height)
--- end
-
--- return StartScene
