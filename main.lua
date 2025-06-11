@@ -23,6 +23,11 @@ end
 function love.update(dt)
 	CurrentScene:update(dt, args)
 	if args.newScene then
+		if(args.newScene == 'newgame') then
+			CurrentScene = require('./Scripts/NewGameScene')
+		elseif(args.newScene == 'loadgame') then
+			CurrentScene = require('./Scripts/LoadGameScene')
+		end
 		CurrentScene = args.newScene
 		args.newScene = nil
 		args.scalingreset = 1
@@ -42,9 +47,6 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	if key == 'escape' then
-		love.event.quit()
-	end
 	CurrentScene:keypressed(key, scancode, isrepeat)
 end
 

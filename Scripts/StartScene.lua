@@ -4,7 +4,9 @@ local StartScene = {
     state,
     timer,
     logo,
-    title
+    title,
+    start = 0,
+    load = 0
 }
 local LOGO = 0
 local TITLE = 1
@@ -37,10 +39,10 @@ function StartScene:load(width, height)
     self.timer = self.logo.fadein
     self.title.buttons = {}
     table.insert(self.title.buttons, button:new(504, 536, 250, 50, function()
-        print('New Game clicked')
+        self.start = 1
     end))
     table.insert(self.title.buttons, button:new(495, 593, 267, 50, function()
-        print('Load Game clicked')
+        self.load = 1
     end))
     table.insert(self.title.buttons, button:new(555, 673, 150, 33, function()
         print('Options clicked')
@@ -49,13 +51,16 @@ function StartScene:load(width, height)
     table.insert(self.title.buttons, button:new(586, 709, 80, 25, function()
         love.event.quit()
     end))
-
-
-
-    self.options.img = love.graphics.newImage('Images/Options.JPEG')
 end
 
 function StartScene:update(dt, args)
+    if(self.start == 1) then
+        self.start = 0
+        args.newScene = 'newgame'
+    elseif(self.load == 1) then
+        self.start = 0
+        args.newScene = 'loadgame'
+    end
     if(dragging == 1) then
         drag_end.x = love.mouse.getX()
         drag_end.y = love.mouse.getY()
@@ -110,7 +115,10 @@ function StartScene:draw()
             end
         end
     elseif (self.state == OPTIONS) then
-
+        -- love.graphics.setColor(255, 255, 255, self.title.fadeAmount)
+        -- love.graphics.draw(self.options.img, 200, 0)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.print('Options not implemented yet', 200, 0)
     else
 
     end
@@ -134,6 +142,9 @@ function StartScene:keypressed(key)
    if key == "tab" then
         debug = not debug
    end
+   if key == "escape" then
+        self.state = TITLE
+   end
 end
 
 function StartScene:mousepressed(x, y, buttonPressed)
@@ -151,6 +162,13 @@ function StartScene:mousepressed(x, y, buttonPressed)
             button:checkClick()
         end
     end
+end
+
+function StartScene:newGame()
+    local newScene = require 'Scripts/PlayScene'
+    args.newScene = newScene
+    args.sceneData = sceneData
+    return true
 end
 
 return StartScene
