@@ -24,11 +24,10 @@ function love.update(dt)
 	CurrentScene:update(dt, args)
 	if args.newScene then
 		if(args.newScene == 'newgame') then
-			CurrentScene = require('./Scripts/NewGameScene')
+			CurrentScene = require('./Scripts/GameHomeScene')
 		elseif(args.newScene == 'loadgame') then
 			CurrentScene = require('./Scripts/LoadGameScene')
 		end
-		CurrentScene = args.newScene
 		args.newScene = nil
 		args.scalingreset = 1
 		CurrentScene:load(args.sceneData)
