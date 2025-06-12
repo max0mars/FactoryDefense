@@ -9,15 +9,15 @@ local StartScene = {
     start = 0,
     load = 0
 }
-local LOGO = 0
-local TITLE = 1
-local OPTIONS = 2
+local GLOBAL = 0
+local LOGO = 1
+local TITLE = 2
+local OPTIONS = 3
 
 local dragging = 0
 local drag_start = {x = 0, y = 0}
 local drag_end = {x = 0, y = 0}
 function StartScene:load(width, height)
-    love.mouse.setVisible(false)
     self.width = width
     self.height = height
     self.logo = {

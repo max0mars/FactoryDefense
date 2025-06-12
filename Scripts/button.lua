@@ -30,6 +30,14 @@ function button:checkhover(x, y)
     end
 end
 
+function button.checkhoverlist(buttons, keyword, x, y)
+    for _, button in pairs(buttons) do
+        if button.screen == keyword then
+            button:checkhover(x, y)
+        end
+    end
+end
+
 function round(num, factor)
     factor = factor or 1
     local dif = num % factor

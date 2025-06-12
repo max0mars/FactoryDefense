@@ -1,7 +1,12 @@
 local button = require 'Scripts/button'
 
-local GameHomeScene = {
+local GLOBAL = 0
+local ARMOURY = 1
+local MAP = 2
+local WORKSHOP = 3
 
+local GameHomeScene = {
+    state = MAP
 }
 
 function GameHomeScene:load(sceneData)
@@ -9,12 +14,28 @@ function GameHomeScene:load(sceneData)
         self.sceneData = sceneData
         self.newGame = 0
     else
-        self.newGame = 1
+        self.newGame = 1 -- cutscene?
     end
+    self.buttons = {
+        button:new(50, 50, 200, 50, GLOBAL, function() state = ARMOURY end),
+        button:new(450, 50, 200, 50, GLOBAL, function() state = MAP end),
+        button:new(850, 50, 200, 50, GLOBAL, function() state = WORKSHOP end)
+    }
+
 end
 
 function GameHomeScene:update(dt, args)
-    
+    self.debug = args.debug or false
+
+    button.checkhoverlist(self.buttons, self.state, love.mouse.getPosition())
+
+    if self.state == ARMOURY then
+        
+    else if self.state == MAP then
+
+    else if self.state == WORKSHOP then
+
+    end
 end
 
 function GameHomeScene:draw()

@@ -16,6 +16,8 @@ local args = {
 }
 
 function love.load()
+	love.mouse.setVisible(false)
+	love.mouse.setGrabbed(true)
 	love.window.setTitle('Factory Defense')
 	love.window.setMode(width, height, {resizable=true})
 	scaling.init(width, height)
@@ -44,6 +46,7 @@ function love.draw()
 		scaling.recalculate()
 		args.scalingreset = 0
 	end
+	scaling.recalculate()
 	scaling.applyTransform()
 	CurrentScene:draw()
 	scaling.resetTransform()
@@ -58,6 +61,10 @@ function love.keypressed(key, scancode, isrepeat)
             time = 0
         end
     end
+	if key == "q" then
+		love.mouse.setVisible(not love.mouse.isVisible())
+		love.mouse.setGrabbed(not love.mouse.isGrabbed())
+	end
 	CurrentScene:keypressed(key, scancode, isrepeat)
 end
 
