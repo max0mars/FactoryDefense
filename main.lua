@@ -46,6 +46,14 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
+	if key == "tab" then
+        self.debug = not self.debug
+        if(self.time == 0) then
+            self.time = 1
+        else
+            self.time = 0
+        end
+    end
 	CurrentScene:keypressed(key, scancode, isrepeat)
 end
 

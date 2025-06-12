@@ -5,6 +5,7 @@ local StartScene = {
     timer,
     logo,
     title,
+    time = 1,
     start = 0,
     load = 0
 }
@@ -26,7 +27,7 @@ function StartScene:load(width, height)
     self.logo.fadeout = 1
     self.logo.state = 0
     self.logo.fadeAmount = 0
-    self.logo.img = love.graphics.newImage('Images/Logo.JPEG')
+    self.logo.img = love.graphics.newImage('Images/Logo.jpeg')
 
 
 
@@ -48,12 +49,13 @@ function StartScene:load(width, height)
         print('Options clicked')
         self.state = OPTIONS
     end))
-    table.insert(self.title.buttons, button:new(586, 709, 80, 25, function()
+    table.insert(self.title.buttons, button:new(586, 739, 80, 25, function()
         love.event.quit()
     end))
 end
 
 function StartScene:update(dt, args)
+    self.debug = args.debug or false
     if(self.start == 1) then
         self.start = 0
         args.newScene = 'newgame'
@@ -104,10 +106,10 @@ end
 function StartScene:draw()
     if(self.state == LOGO) then
         love.graphics.setColor(255, 255, 255, self.logo.fadeAmount)
-        love.graphics.draw(self.logo.img, 300, 80)
+        love.graphics.draw(self.logo.img, 220, 20)
     elseif (self.state == TITLE) then
         love.graphics.setColor(255, 255, 255, self.title.fadeAmount)
-        love.graphics.draw(self.title.img, 200, 0)
+        love.graphics.draw(self.title.img, -105, -40)
         for _, button in pairs(self.title.buttons) do
             if(button.hovered) then
                 love.graphics.setColor(1, 1, 1)
@@ -135,13 +137,12 @@ function StartScene:draw()
         love.graphics.print('size = (' .. math.abs(drag_end.x - drag_start.x) .. ', ' .. math.abs(drag_end.y - drag_start.y) .. ')', 0, 40)
         love.graphics.print('dragging = ' .. dragging, 0, 60)
         love.graphics.print('state = ' .. self.state, 0, 80)
+        love.graphics.line(640, 0, 640, 800)
+    love.graphics.line(0, 400, 1280, 400)
     end
 end
 
 function StartScene:keypressed(key)
-   if key == "tab" then
-        debug = not debug
-   end
    if key == "escape" then
         self.state = TITLE
    end
@@ -157,7 +158,7 @@ function StartScene:mousepressed(x, y, buttonPressed)
     else
         dragging = 0
     end
-    if(self.state == TITLE) then
+    if(self.state == TITLE and not debug) then
         for _, button in pairs(self.title.buttons) do
             button:checkClick()
         end

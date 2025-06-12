@@ -22,5 +22,14 @@ function GameHomeScene:draw()
     love.graphics.print("Game Home Scene", 100, 100)
 end
 
+function StartScene:keypressed(key)
+   if key == "escape" then
+        --"Are you sure you want to exit?" type popup
+   end
+end
+
+function StartScene:mousepressed(x, y, buttonPressed)
+    
+end
 
 return GameHomeScene
