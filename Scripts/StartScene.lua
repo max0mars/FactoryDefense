@@ -28,14 +28,6 @@ function StartScene:load(width, height)
         fadeAmount = 0,
         img = love.graphics.newImage('Images/Logo.jpeg')
     }
-    -- self.logo.fadein = 1
-    -- self.logo.hold = 0
-    -- self.logo.fadeout = 1
-    -- self.logo.state = 0
-    -- self.logo.fadeAmount = 0
-    -- self.logo.img = love.graphics.newImage('Images/Logo.jpeg')
-
-
 
     self.title = {
         fadein = 2,
@@ -44,10 +36,7 @@ function StartScene:load(width, height)
         fadeAmount = 0,
         img = love.graphics.newImage('Images/Title.JPEG')
     }
-    -- self.title.fadein = 2
-    -- self.title.fadeAmount = 0
-    -- self.title.state = 0
-    -- self.title.img = love.graphics.newImage('Images/Title.JPEG')
+
     self.state = 0
     self.timer = self.logo.fadein
     self.buttons = {}
@@ -57,7 +46,7 @@ function StartScene:load(width, height)
     table.insert(self.buttons, button:new(490, 610, 300, 50, TITLE, function()
         self.load = 1
     end))
-    table.insert(self.buttons, button:new(490, 700, 300, 33, TITLE, function()
+    table.insert(self.buttons, button: new(490, 700, 300, 33, TITLE, function()
         print('Options clicked')
         self.state = OPTIONS
     end))
