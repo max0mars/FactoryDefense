@@ -5,6 +5,9 @@ local scaling = require('./Scripts/scaling')
 local width = 1280
 local height = 800
 
+local debug = false
+local time = 1
+
 local CurrentScene = Start
 local args = {
 	scalingreset = 0,
@@ -21,7 +24,8 @@ function love.load()
 end
 
 function love.update(dt)
-	CurrentScene:update(dt, args)
+	args.debug = debug
+	CurrentScene:update(dt * time, args)
 	if args.newScene then
 		if(args.newScene == 'newgame') then
 			CurrentScene = require('./Scripts/GameHomeScene')
@@ -47,11 +51,11 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
 	if key == "tab" then
-        self.debug = not self.debug
-        if(self.time == 0) then
-            self.time = 1
+        debug = not debug
+        if(time == 0) then
+            time = 1
         else
-            self.time = 0
+            time = 0
         end
     end
 	CurrentScene:keypressed(key, scancode, isrepeat)

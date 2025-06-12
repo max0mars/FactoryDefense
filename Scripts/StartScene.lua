@@ -12,7 +12,6 @@ local StartScene = {
 local LOGO = 0
 local TITLE = 1
 local OPTIONS = 2
-local debug = false
 
 local dragging = 0
 local drag_start = {x = 0, y = 0}
@@ -39,17 +38,17 @@ function StartScene:load(width, height)
     self.state = 0
     self.timer = self.logo.fadein
     self.title.buttons = {}
-    table.insert(self.title.buttons, button:new(504, 536, 250, 50, function()
+    table.insert(self.title.buttons, button:new(490, 540, 300, 50, function()
         self.start = 1
     end))
-    table.insert(self.title.buttons, button:new(495, 593, 267, 50, function()
+    table.insert(self.title.buttons, button:new(490, 610, 300, 50, function()
         self.load = 1
     end))
-    table.insert(self.title.buttons, button:new(555, 673, 150, 33, function()
+    table.insert(self.title.buttons, button:new(490, 700, 300, 33, function()
         print('Options clicked')
         self.state = OPTIONS
     end))
-    table.insert(self.title.buttons, button:new(586, 739, 80, 25, function()
+    table.insert(self.title.buttons, button:new(490, 739, 300, 33, function()
         love.event.quit()
     end))
 end
@@ -106,7 +105,7 @@ end
 function StartScene:draw()
     if(self.state == LOGO) then
         love.graphics.setColor(255, 255, 255, self.logo.fadeAmount)
-        love.graphics.draw(self.logo.img, 220, 20)
+        love.graphics.draw(self.logo.img, 220, -10)
     elseif (self.state == TITLE) then
         love.graphics.setColor(255, 255, 255, self.title.fadeAmount)
         love.graphics.draw(self.title.img, -105, -40)
@@ -128,7 +127,7 @@ function StartScene:draw()
         love.graphics.setColor(1, 0, 0, 0.5)
         love.graphics.circle('fill', love.mouse.getX(), love.mouse.getY(), 4)
     end
-    if(debug) then
+    if(self.debug) then
         love.graphics.setColor(1, 1, 1)
         love.graphics.rectangle('line', drag_start.x, drag_start.y, drag_end.x - drag_start.x, drag_end.y - drag_start.y)
         love.graphics.setColor(1, 0, 0)
@@ -158,7 +157,7 @@ function StartScene:mousepressed(x, y, buttonPressed)
     else
         dragging = 0
     end
-    if(self.state == TITLE and not debug) then
+    if(self.state == TITLE and not self.debug) then
         for _, button in pairs(self.title.buttons) do
             button:checkClick()
         end
