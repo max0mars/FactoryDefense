@@ -20,35 +20,48 @@ function StartScene:load(width, height)
     love.mouse.setVisible(false)
     self.width = width
     self.height = height
-    self.logo = {}
-    self.logo.fadein = 1
-    self.logo.hold = 0
-    self.logo.fadeout = 1
-    self.logo.state = 0
-    self.logo.fadeAmount = 0
-    self.logo.img = love.graphics.newImage('Images/Logo.jpeg')
+    self.logo = {
+        fadein = 1,
+        hold = 0,
+        fadeout = 1,
+        state = 0,
+        fadeAmount = 0,
+        img = love.graphics.newImage('Images/Logo.jpeg')
+    }
+    -- self.logo.fadein = 1
+    -- self.logo.hold = 0
+    -- self.logo.fadeout = 1
+    -- self.logo.state = 0
+    -- self.logo.fadeAmount = 0
+    -- self.logo.img = love.graphics.newImage('Images/Logo.jpeg')
 
 
 
-    self.title = {}
-    self.title.fadein = 2
-    self.title.fadeAmount = 0
-    self.title.state = 0
-    self.title.img = love.graphics.newImage('Images/Title.JPEG')
+    self.title = {
+        fadein = 2,
+        fadeout = 1,
+        state = 0,
+        fadeAmount = 0,
+        img = love.graphics.newImage('Images/Title.JPEG')
+    }
+    -- self.title.fadein = 2
+    -- self.title.fadeAmount = 0
+    -- self.title.state = 0
+    -- self.title.img = love.graphics.newImage('Images/Title.JPEG')
     self.state = 0
     self.timer = self.logo.fadein
-    self.title.buttons = {}
-    table.insert(self.title.buttons, button:new(490, 540, 300, 50, function()
+    self.buttons = {}
+    table.insert(self.buttons, button:new(490, 540, 300, 50, TITLE, function()
         self.start = 1
     end))
-    table.insert(self.title.buttons, button:new(490, 610, 300, 50, function()
+    table.insert(self.buttons, button:new(490, 610, 300, 50, TITLE, function()
         self.load = 1
     end))
-    table.insert(self.title.buttons, button:new(490, 700, 300, 33, function()
+    table.insert(self.buttons, button:new(490, 700, 300, 33, TITLE, function()
         print('Options clicked')
         self.state = OPTIONS
     end))
-    table.insert(self.title.buttons, button:new(490, 739, 300, 33, function()
+    table.insert(self.buttons, button:new(490, 739, 300, 33, TITLE, function()
         love.event.quit()
     end))
 end
@@ -95,8 +108,10 @@ function StartScene:update(dt, args)
             end
         elseif(self.title.state == 1) then -- logo hold
             local mx, my = love.mouse.getPosition()
-            for _, button in pairs(self.title.buttons) do
-                button:checkhover(mx, my)
+            for _, button in pairs(self.buttons) do
+                if(button.screen == TITLE) then
+                    button:checkhover(mx, my)
+                end
             end
         end
     end
@@ -109,8 +124,8 @@ function StartScene:draw()
     elseif (self.state == TITLE) then
         love.graphics.setColor(255, 255, 255, self.title.fadeAmount)
         love.graphics.draw(self.title.img, -105, -40)
-        for _, button in pairs(self.title.buttons) do
-            if(button.hovered) then
+        for _, button in pairs(self.buttons) do
+            if(button.hovered and button.screen == TITLE) then
                 love.graphics.setColor(1, 1, 1)
                 love.graphics.rectangle('line', button.x, button.y, button.width, button.height)
             end
@@ -148,6 +163,10 @@ function StartScene:keypressed(key)
 end
 
 function StartScene:mousepressed(x, y, buttonPressed)
+    if(self.state == LOGO) then
+        self.state = TITLE
+        self.timer = 0
+    end
     if (dragging == 0 and buttonPressed == 1 and debug) then
         dragging = 1
         drag_start.x = x
@@ -158,8 +177,10 @@ function StartScene:mousepressed(x, y, buttonPressed)
         dragging = 0
     end
     if(self.state == TITLE and not self.debug) then
-        for _, button in pairs(self.title.buttons) do
-            button:checkClick()
+        for _, button in pairs(self.buttons) do
+            if(button.screen == TITLE) then
+                button:checkClick(x, y)
+            end
         end
     end
 end

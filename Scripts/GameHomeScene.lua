@@ -18,17 +18,24 @@ function GameHomeScene:update(dt, args)
 end
 
 function GameHomeScene:draw()
-    love.graphics.setColor(255, 255, 255, 1)
-    love.graphics.print("Game Home Scene", 100, 100)
+    love.graphics.clear(0, 0, 0, 255)
+    love.graphics.setColor(255, 0, 0)
+    love.graphics.print("Armoury", 80, 10)
+    love.graphics.print("Map", 600, 10)
+    love.graphics.print("Workshop", 1000, 10)
+    if(not love.mouse.isVisible()) then
+        love.graphics.setColor(1, 0, 0, 0.5)
+        love.graphics.circle('fill', love.mouse.getX(), love.mouse.getY(), 4)
+    end
 end
 
-function StartScene:keypressed(key)
+function GameHomeScene:keypressed(key)
    if key == "escape" then
         --"Are you sure you want to exit?" type popup
    end
 end
 
-function StartScene:mousepressed(x, y, buttonPressed)
+function GameHomeScene:mousepressed(x, y, buttonPressed)
     
 end
 

@@ -1,13 +1,14 @@
 button = {}
 button.__index = button
 
-function button:new(x, y, width, height, callback)
+function button:new(x, y, width, height, screen, callback)
     local b = {
         x = x,
         y = y,
         width = width,
         height = height,
         callback = callback,
+        screen = screen or '',
         hovered = false
     }
     setmetatable(b, button)
@@ -18,10 +19,6 @@ function button:checkClick()
     if(self.hovered) then
         return self.callback()
     end
-end
-
-function button:updateProgress(amount)
-    self.progress = math.min(self.progress + amount, self.progressMax)
 end
 
 function button:checkhover(x, y)
