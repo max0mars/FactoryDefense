@@ -37,7 +37,7 @@ function StartScene:load(width, height)
         img = love.graphics.newImage('Images/Title.JPEG')
     }
 
-    self.state = 0
+    self.state = LOGO
     self.timer = self.logo.fadein
     self.buttons = {}
     table.insert(self.buttons, button:new(490, 540, 300, 50, TITLE, function()
@@ -140,8 +140,9 @@ function StartScene:draw()
         love.graphics.print('size = (' .. math.abs(drag_end.x - drag_start.x) .. ', ' .. math.abs(drag_end.y - drag_start.y) .. ')', 0, 40)
         love.graphics.print('dragging = ' .. dragging, 0, 60)
         love.graphics.print('state = ' .. self.state, 0, 80)
+        love.graphics.print('timer = ' .. self.timer, 0, 100)
         love.graphics.line(640, 0, 640, 800)
-    love.graphics.line(0, 400, 1280, 400)
+        love.graphics.line(0, 400, 1280, 400)
     end
 end
 
@@ -168,7 +169,7 @@ function StartScene:mousepressed(x, y, buttonPressed)
     if(self.state == TITLE and not self.debug) then
         for _, button in pairs(self.buttons) do
             if(button.screen == TITLE) then
-                button:checkClick(x, y)
+                button:click(x, y)
             end
         end
     end

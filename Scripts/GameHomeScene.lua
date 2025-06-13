@@ -6,7 +6,7 @@ local MAP = 2
 local WORKSHOP = 3
 
 local GameHomeScene = {
-    state = MAP
+    screen = MAP
 }
 
 function GameHomeScene:load(sceneData)
@@ -17,9 +17,23 @@ function GameHomeScene:load(sceneData)
         self.newGame = 1 -- cutscene?
     end
     self.buttons = {
-        button:new(50, 50, 200, 50, GLOBAL, function() state = ARMOURY end),
-        button:new(450, 50, 200, 50, GLOBAL, function() state = MAP end),
-        button:new(850, 50, 200, 50, GLOBAL, function() state = WORKSHOP end)
+        button:new(50, 0, 200, 50, GLOBAL, function() self.screen = ARMOURY end),
+        button:new(450, 0, 200, 50, GLOBAL, function() self.screen = MAP end),
+        button:new(850, 0, 200, 50, GLOBAL, function() self.screen = WORKSHOP end),
+
+        button:new(0, 300, 200, 50, ARMOURY, function() return end),
+        button:new(0, 400, 200, 50, ARMOURY, function() return end),
+        button:new(0, 500, 200, 50, ARMOURY, function() return end),
+        button:new(0, 600, 200, 50, ARMOURY, function() return end),
+
+        button:new(300, 400, 200, 200, MAP, function() return end),
+        button:new(633, 200, 200, 200, MAP, function() return end),
+        button:new(800, 600, 200, 200, MAP, function() return end),
+
+        button:new(0, 300, 200, 50, WORKSHOP, function() return end),
+        button:new(0, 400, 200, 50, WORKSHOP, function() return end),
+        button:new(0, 500, 200, 50, WORKSHOP, function() return end),
+        button:new(0, 600, 200, 50, WORKSHOP, function() return end)
     }
 
 end
@@ -27,15 +41,15 @@ end
 function GameHomeScene:update(dt, args)
     self.debug = args.debug or false
 
-    button.checkhoverlist(self.buttons, self.state, love.mouse.getPosition())
+    button.checkhoverlist(self.buttons, self.screen, love.mouse.getPosition())
 
-    if self.state == ARMOURY then
+    -- if self.state == ARMOURY then
         
-    else if self.state == MAP then
+    -- elseif self.state == MAP then
 
-    else if self.state == WORKSHOP then
+    -- elseif self.state == WORKSHOP then
 
-    end
+    -- end
 end
 
 function GameHomeScene:draw()
@@ -48,16 +62,34 @@ function GameHomeScene:draw()
         love.graphics.setColor(1, 0, 0, 0.5)
         love.graphics.circle('fill', love.mouse.getX(), love.mouse.getY(), 4)
     end
+    button.drawButtons(self.buttons, self.screen)
+    if(self.debug) then
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.print('Mouse = (' .. love.mouse.getX() .. ', ' .. love.mouse.getY() .. ')', 0, 0)
+        love.graphics.print('screen = ' .. self.screen, 0, 20)
+        love.graphics.line(640, 0, 640, 800)
+        love.graphics.line(0, 400, 1280, 400)
+        button.debug(self.buttons, self.screen)
+    end
 end
 
 function GameHomeScene:keypressed(key)
-   if key == "escape" then
+    if key == "escape" then
         --"Are you sure you want to exit?" type popup
-   end
+    end
 end
 
 function GameHomeScene:mousepressed(x, y, buttonPressed)
-    
+    button.clickbuttons(self.buttons, self.state, x, y)
+end
+
+function GameHomeScene:keypressed(key)
+    if key == "escape" then
+        love.event.quit()
+    elseif key == "tab" then
+        self.screen = self.screen + 1
+        if self.screen > 3 then self.screen = 1 end
+    end
 end
 
 return GameHomeScene

@@ -27,6 +27,7 @@ end
 
 function love.update(dt)
 	args.debug = debug
+	time = 1
 	CurrentScene:update(dt * time, args)
 	if args.newScene then
 		if(args.newScene == 'newgame') then
@@ -53,7 +54,7 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	if key == "tab" then
+	if key == "p" then
         debug = not debug
         if(time == 0) then
             time = 1
